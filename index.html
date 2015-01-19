@@ -1,0 +1,63 @@
+<!doctype html>
+<!--[if lt IE 7 ]> <html lang="en" class="no-js ie6"> <![endif]-->
+<!--[if IE 7 ]>    <html lang="en" class="no-js ie7"> <![endif]-->
+<!--[if IE 8 ]>    <html lang="en" class="no-js ie8"> <![endif]-->
+<!--[if IE 9 ]>    <html lang="en" class="no-js ie9"> <![endif]-->
+<!--[if gte IE 9]><!--> <html lang="en" class="no-js"> <!--<![endif]-->
+<head>
+<title>Margevici.us</title>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content=""/>
+<meta name="keywords" content="Margevicius, Margevici.us" /> 
+
+<!-- Fav and touch icons -->
+<link rel="icon" sizes="152x152" href="">  
+<link rel="apple-touch-icon-precomposed" sizes="152x152" href="">
+<link rel="apple-touch-icon-precomposed" sizes="76x76" href="">
+<link rel="apple-touch-icon-precomposed" sizes="60x60" href="">
+<link rel="apple-touch-icon-precomposed" href="">
+
+ <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+ </head>
+ 
+ <body class="container-fluid">
+ 
+ <header>
+ </header>
+ 
+ <main>
+	<div class="row content">
+		<div class="col-sm-12">	
+			<section> 								
+				<div id="jqversion"></div>
+				<div id="bootstrapver"></div>
+			</section> 
+		</div>		
+	</div><!-- div.content -->
+ </main>
+ 
+ <footer>
+ </footer>
+ 
+ 
+ <!--[if lt IE 9]>
+    <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+    <script>console.warn("Please update to the lastest browser. Running in depreciated mode");</script>
+<![endif]-->
+<!--[if gte IE 9]><!-->
+    <script src="//code.jquery.com/jquery-2.1.3.min.js"></script>
+<!--<![endif]-->
+ 
+<script type="text/javascript" src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script>
+ <script>
+//Just something to output the template version on the homescreen. The version reflects which branch we are working on. 
+$(function(){	
+	$("#jqversion").html("Running Jquery Version: " + $.fn.jquery);	
+	$("#bootstrapver").html("Running Bootstrap Version: 3.3.1 cdn" );
+});
+</script>
+ </body>
+ </html>
