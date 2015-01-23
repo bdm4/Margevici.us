@@ -8,19 +8,40 @@
 	<title>Margevici.us</title>
 	<!-- #include file="/templates/includes/head-content.html" -->
 	<style>
-		
+	/* 
+		Theme  #92CD00, #FFCF79, #E5E4D7, #2C6700 
+		http://www.colorcombos.com/color-schemes/7/ColorCombo7.html
+	*/
+	
+	body { 
+		background: #E5E4D7; 
+		padding-top: 70px; /* because the navbar is fixed we should prevent some overlay. The navbar is 50px high. */
+		font-family: 'Alegreya', serif;
+	}
+	
+	header, footer {
+		background: #2C6700;
+		height: 30px;
+	}		
+	main {}
 	
 	
 	</style>
 	
  </head>
  
- <body class="container-fluid">
+ <body>
  
- <header>
- </header>
+ <nav class="nav navbar-default navbar-fixed-top">
+	<div class="container-fluid"> <!-- note: main is also a fluid container -->
+		<div class="navbar-header">
+			<a class="navbar-brand font-effect-fire-animation" href="#">Margevici.us</a>
+		</div>
+	</div>
+ </nav>
  
- <main>
+ 
+ <main class="container-fluid">
 	<div class="row content">
 		<div class="col-sm-12">	
 			<section> 								
@@ -30,9 +51,6 @@
 		</div>		
 	</div><!-- div.content -->
  </main>
- 
- <footer>
- </footer>
  
 <!-- #include file="/templates/includes/scripts.html" -->
 
