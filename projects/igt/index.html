@@ -35,10 +35,9 @@
 
 	<style>
 	body { background: #006600; }	
-	a { outline: 0; /* remove the dotted border */ }
-	figcaption { font-size: 16px; text-align: center;}
-	.progress { margin: 0 15px; }
-
+	a:active, a:focus { outline: none; /* remove the dotted border */ }
+	figcaption { font-size: 16px; text-align: center;}	
+	.row { margin: 0 15px; }
 	
 	@media (max-width: 767px) {		
 	}
@@ -99,26 +98,22 @@
 		</div>
 	</section>
 
-	<section class="row">		
-		<div class="progress">
-			<div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="2000" aria-valuemin="0" aria-valuemax="6000" style="width: 33%">
-				Cash Pile <span id="cashpile"></span>				
-			</div>
-		</div>
-		<div class="progress">
-			<div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="6000" style="width: 0%">
-				Borrowed <span id="borrowedpile"></span>				
-			</div>
-		</div>
-	</section>
-	
 	<section class="row">
-		<textarea id="gamelog" style="width=100%; margin: 0 15px;">
+		<p>Cash Pile</p>
+		<div class="progress">
+			<div id="cashpilebar" class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="2000" aria-valuemin="0" aria-valuemax="6000" style="width: 33%">
+				<span id="cashpileamt">$2000</span>				
+			</div>
+		</div>
 		
-		</textarea>
+		<p>Borrowed</p>
+		<div class="progress">		
+			<div id="borrowedpilebar" class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="6000" style="width: 2em">
+				<span id="borrowedpileamt">$0</span>				
+			</div>
+		</div>
 	</section>
-	
-	
+		
 	<div id="modal-splash" class="modal fade">
 		<div class="modal-dialog">
 			<div class="modal-content">
@@ -126,7 +121,15 @@
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 					<h4 class="modal-title">Welcome to IGT V0.1!</h4>
 				</div>
-				<div class="modal-body">						
+				<div class="modal-body">	
+					<div>
+						<p>Rules:</p>
+						<ol>
+							<li>The goal is to maximize profit on loan.</li>
+							<li>You are free to choose a card from any deck at any time</li>
+							
+						</ol>
+					</div>
 					<form>
 						<label for="emailResultsTo">Where should I send the results to?</label>
 						<div class="input-group">							
@@ -161,12 +164,23 @@ var totalcash = 2000, //cash in the cash pile
 	decktwoclicks = 0, //clicks for deck two
 	deckthreeclicks = 0, //clicks for deck three
 	deckfourclicks = 0, //clicks for deck four
+	
+	DECKONEWIN = 100, 
+	DECKTWOWIN = 100,
+	DECKTHREEWIN = 50, 
+	DECKFOURWIN = 50,
+	
+	DECKONELOSS = 150, //must be higher 
+	DECKTWOLOSS = 125, 
+	DECKTHREELOSS = 25,
+	DECKFOURLOSS = 15,	
+	
 	totalclicks = 0, //total clicks. if == to MAXGAMES stop playing.
 	CASHMAX = 6000, //Maximum amount of cash that can be won.
 	borrowedcash = 0, //how much cash did you borrow?
 	MAXGAMES = 100; //maxium amount of plays
 
-
+//rewards preprogramed pentalties are higher for deck A & B.
 $(function(){
 	$('#modal-splash').modal('show'); //show the modal on first load
 	
@@ -183,22 +197,23 @@ $(function(){
 			switch(clicked) 
 			{
 				case "card-one":
-					totalcash -= 50;
+					totalcash += 100; //win 100 profit
+					
 					deckoneclicks += 1;
 					$("#deck-one-clicks").html(deckoneclicks);
 					break;
 				case "card-two":
-					totalcash -= 105;
+					totalcash += 100; //win 100 profit
 					decktwoclicks += 1;
 					$("#deck-two-clicks").html(decktwoclicks);
 					break;
 				case "card-three":
-					totalcash += 50;
+					totalcash += 50; //win 50 profit
 					deckthreeclicks += 1;
 					$("#deck-three-clicks").html(deckthreeclicks);
 					break;
 				case "card-four":
-					totalcash += 105;
+					totalcash += 50; //win 50 profit
 					deckfourclicks += 1;
 					$("#deck-four-clicks").html(deckfourclicks);
 					break;
@@ -207,11 +222,14 @@ $(function(){
 			totalclicks = deckoneclicks + decktwoclicks + deckthreeclicks + deckfourclicks;
 			
 			var cashpilebarvalue = 100 * totalcash / CASHMAX;
+			
+			$("#cashpilebar").css("width", cashpilebarvalue.toString() + "%");
+			$("#cashpileamt").html("$" + totalcash);
+			$("#borrowedpilebar").css("width", cashpilebarvalue.toString() + "%");
+			$("#borrowedpileamt").html("$" + totalcash);
+			
 			console.log("totalcash", totalcash);
 			console.log("cashpilebarvalue", cashpilebarvalue);
-			
-			
-			$(".progress-bar-success").css("width", cashpilebarvalue.toString() + "%");
 			
 			console.log("Total clicks = ", totalclicks);
 		}
