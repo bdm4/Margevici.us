@@ -34,14 +34,14 @@
 	</script>
 
 	<style>
-	body { background: #006600; }	
-	a:active, a:focus { outline: none; /* remove the dotted border */ }
-	figcaption { font-size: 16px; text-align: center;}	
-	.row { margin: 0 15px; }
-	
-	@media (max-width: 767px) {		
-	}
-	
+		body { background: #006600; }	
+		a:active, a:focus { outline: none; /* remove the dotted border */ }
+		figcaption { font-size: 16px; text-align: center;}	
+		.row { margin: 0 15px; }
+		#gamelog { width: 100%; }
+		
+		@media (max-width: 767px) {		
+		}	
 	</style>
 	
 	<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
@@ -97,7 +97,7 @@
 			</figure>
 		</div>
 	</section>
-
+	
 	<section class="row">
 		<p>Cash Pile</p>
 		<div class="progress">
@@ -113,7 +113,11 @@
 			</div>
 		</div>
 	</section>
-		
+	
+	<section class="row">
+		<textarea id="gamelog"></textarea>
+	</section>
+	
 	<div id="modal-splash" class="modal fade">
 		<div class="modal-dialog">
 			<div class="modal-content">
@@ -170,20 +174,27 @@ var totalcash = 2000, //cash in the cash pile
 	DECKTHREEWIN = 50, 
 	DECKFOURWIN = 50,
 	
-	DECKONELOSS = 150, //must be higher 
-	DECKTWOLOSS = 125, 
-	DECKTHREELOSS = 25,
-	DECKFOURLOSS = 15,	
+	//Probablity of loss Should be between 0.00 and 1.00. Note the inequalities in the switch. if px > 0.5 you may have to 1.00-px
+	DECKONELOSSPX = 0.50, 
+	DECKTWOLOSSPX = 0.10, 
+	DECKTHREELOSSPX = 0.50,
+	DECKFOURLOSSPX = 0.10,
+	
+	//Penalty Ranges.
+	DECKONELOSSMIN = 200, DECKONELOSSMAX = 500, //DECK A =  .5 * (500-200) = 150 Average loss
+	DECKTWOLOSSMIN = 1250, DECKTWOLOSSMAX = 1250, //DECK B = .1 * 1250 =  250 Average Loss
+	DECKTHREELOSSMIN = 50, DECKTHREELOSSMAX = 150, //DECK C = .5 * (150-50) = 50 Average Loss
+	DECKFOURLOSSMIN = 250, DECKFOURLOSSMAX = 250, //DECK D  = .1 * 250 = 25 Average Loss
 	
 	totalclicks = 0, //total clicks. if == to MAXGAMES stop playing.
-	CASHMAX = 6000, //Maximum amount of cash that can be won.
+	CASHMAX = 15000, //Maximum amount of cash that can be won.
 	borrowedcash = 0, //how much cash did you borrow?
 	MAXGAMES = 100; //maxium amount of plays
 
 //rewards preprogramed pentalties are higher for deck A & B.
 $(function(){
 	$('#modal-splash').modal('show'); //show the modal on first load
-	
+	$("#gamelog").val("");
 	$("#emailBtn").click(function(){
 		var emailto = $("#emailResultsTo").val();
 		console.log("I will email results to: ", emailto);
@@ -194,43 +205,76 @@ $(function(){
 		if(totalclicks < MAXGAMES)
 		{
 			var clicked = $(this).attr("id");
+			
+			var gamelogmsg = "You win ";
+			var newline = "\r\n";
 			switch(clicked) 
 			{
 				case "card-one":
-					totalcash += 100; //win 100 profit
+					totalcash += DECKONEWIN; //win 100 profit
 					
+					gamelogmsg += DECKONEWIN.toString();
+					if( Math.random() <= DECKONELOSSPX)
+					{						
+						gamelogmsg += newline + "You lost $200";
+						borrowedcash += 200;
+						totalcash -= 200;
+					}
 					deckoneclicks += 1;
 					$("#deck-one-clicks").html(deckoneclicks);
 					break;
 				case "card-two":
-					totalcash += 100; //win 100 profit
+					totalcash += DECKTWOWIN; //win 100 profit
+					gamelogmsg += DECKTWOWIN.toString();
+					if( Math.random() <= DECKTWOLOSSPX)
+					{
+						gamelogmsg += newline + "You lost $1250";
+						borrowedcash += 1250;
+						totalcash -= 1250;
+					}					
 					decktwoclicks += 1;
 					$("#deck-two-clicks").html(decktwoclicks);
 					break;
 				case "card-three":
-					totalcash += 50; //win 50 profit
+					totalcash += DECKTHREEWIN; //win 50 profit
+					gamelogmsg += DECKTHREEWIN.toString();
+					if( Math.random() <= DECKTHREELOSSPX)
+					{
+						gamelogmsg += newline + "You lost $50";
+						borrowedcash += 50;
+						totalcash -= 50;
+					}					
 					deckthreeclicks += 1;
 					$("#deck-three-clicks").html(deckthreeclicks);
 					break;
 				case "card-four":
-					totalcash += 50; //win 50 profit
+					totalcash += DECKFOURWIN; //win 50 profit
+					gamelogmsg += DECKFOURWIN.toString();
+					if( Math.random() <= DECKFOURLOSSPX)
+					{
+						gamelogmsg += newline + "You lost $250";
+						borrowedcash += 250;
+						totalcash -= 250;
+					}
 					deckfourclicks += 1;
 					$("#deck-four-clicks").html(deckfourclicks);
 					break;
 			}
 			
 			totalclicks = deckoneclicks + decktwoclicks + deckthreeclicks + deckfourclicks;
+			if(totalcash < 0) totalcash = 0; //if total cash is negative make it 0.
 			
+			$("#gamelog").val(gamelogmsg);
 			var cashpilebarvalue = 100 * totalcash / CASHMAX;
+			var borrowedpilebarvalue = 100 * borrowedcash / CASHMAX;
 			
 			$("#cashpilebar").css("width", cashpilebarvalue.toString() + "%");
 			$("#cashpileamt").html("$" + totalcash);
-			$("#borrowedpilebar").css("width", cashpilebarvalue.toString() + "%");
-			$("#borrowedpileamt").html("$" + totalcash);
+			$("#borrowedpilebar").css("width", borrowedpilebarvalue.toString() + "%");
+			$("#borrowedpileamt").html("$" + borrowedcash);
 			
 			console.log("totalcash", totalcash);
-			console.log("cashpilebarvalue", cashpilebarvalue);
-			
+			console.log("cashpilebarvalue", cashpilebarvalue);			
 			console.log("Total clicks = ", totalclicks);
 		}
 		else
