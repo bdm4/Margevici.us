@@ -24,21 +24,41 @@
 
 
 	<script>
-		(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-		m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-		})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+	    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-		ga('create', 'UA-58996218-1', 'auto');
-		ga('send', 'pageview');
+	    ga('create', 'UA-58996218-1', 'auto');
+	    ga('send', 'pageview');
 	</script>
 
 	<style>
 		body { background: #006600; }	
-		a:active, a:focus { outline: none; /* remove the dotted border */ }
+		
+        figure a img {
+             border: 2px solid black;
+             border-radius: 15px;
+        }
+
+        figure a img:hover {
+             border: 2px solid #00BB00;
+        }       
+
 		figcaption { font-size: 16px; text-align: center;}	
 		.row { margin: 0 15px; }
-		#gamelog { width: 100%; }
+		#gamelog { 
+            width: 100%;
+            background: #fff;             
+            padding: 6px 5px;
+            box-shadow: inset 0px 0px 6px 2px #8A8A8A;
+            -webkit-box-shadow: inset 0px 0px 6px 2px #8A8A8A;
+            -moz-box-shadow: inset 0px 0px 6px 2px #8A8A8A;
+            -o-box-shadow: inset 0px 0px 6px 2px #8A8A8A;
+            border-radius: 3px;              
+		}
+
+        #gamelog p {border-bottom: 1px solid #AEAEAE;}
 		
 		@media (max-width: 767px) {		
 		}	
@@ -108,9 +128,11 @@
 	</section>
 	
 	<section class="row">
-		//report reward, penalty, net gain.. 
-		
-		<textarea id="gamelog"></textarea>
+		<div id="gamelog">
+            <p class="outputtext">You won: <span id="winamt"></span></p>
+            <p class="outputtext">You lost: <span id="penaltyamt"></span></p>
+            <p class="outputtext">Net +/-: <span id="netgains"></span></p>
+		</div>
 	</section>
 	
 	<div id="modal-splash" class="modal fade">
@@ -124,9 +146,16 @@
 					<div>
 						<p>Rules:</p>
 						<ol>
-							<li>The goal is to maximize profit on loan.</li>
-							<li>You are free to choose a card from any deck at any time</li>
-							
+							<li>In front of you on the screen, there are 4 decks of cards: A, B, C, and D.</li>
+                            <li>When we begin the game, I want you to select one card at a time by clicking on a card from any deck you choose.</li>
+                            <li>Each time you select a card, the computer will tell you that you won some money. I don’t know how much money you will win. You will find out as we go along. Every time you win, the bar gets bigger.</li>
+                            <li>Every so often, when you click on a card, the computer will tell you that you won some money as usual, but then it will say that you lost some money as well. I don’t know when you will lose or how much. You will find out as we go along. Every time you lose, the bar gets smaller.</li>
+                            <li>You are absolutely free to switch from one deck to the other at any time, and as often as you wish.</li>
+                            <li>The goal of the game is to win as much money as possible and avoid losing as much money as possible.</li>
+                            <li>You won’t know when the game will end. Simply keep on playing until the computer stops.</li>
+                            <li>I am going to give you $2000 of credit to start the game. </li>
+                            <li>The only hint I can give you, and the most important thing to note is this: Out of these four decks of cards, there are some that are worse than others, and to win you should try to stay away from bad decks. No matter how much you find yourself losing, you can still win the game if you avoid the worst decks.</li>
+                            <li>Also note that the computer does not change the order of the cards once the game begins. It does not make you lose at random, or make you lose money based on the last card you picked.</li>							
 						</ol>
 					</div>
 					<form>
@@ -142,6 +171,23 @@
 			</div>
 		</div>
 	</div>	
+
+    <div id="modal-gameend" class="modal fade">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title">Thank you!</h4>
+				</div>
+				<div class="modal-body">	
+					<div>
+						Your test is complete. Results will be emailed to: <span id="geemail"></span>
+					</div>									
+				</div>
+			</div>
+		</div>
+	</div>	
+
 </main>
  
 <!-- DEVELOPMENT DEBUGGING -->
@@ -158,107 +204,115 @@
 
 <script>
 
-var totalcash = 2000, //cash in the cash pile
-	deckoneclicks = 0, //clicks for deck one
-	decktwoclicks = 0, //clicks for deck two
-	deckthreeclicks = 0, //clicks for deck three
-	deckfourclicks = 0, //clicks for deck four
+    var totalcash = 2000, //cash in the cash pile
+        deckoneclicks = 0, //clicks for deck one
+        decktwoclicks = 0, //clicks for deck two
+        deckthreeclicks = 0, //clicks for deck three
+        deckfourclicks = 0, //clicks for deck four
+        totalclicks = 0, //total clicks. if == to MAXGAMES stop playing.  
+        penalty = 0,   //penalty
+        netgain = 0,   //netgain
+        email_address = 'someone@somewhere.com',
+        DECKA_WIN = 100,
+        DECKB_WIN = 100,
+        DECKC_WIN = 50,
+        DECKD_WIN = 50,                
+	    CASHMAX = 6000, //Maximum amount of cash that can be won.	
+	    MAXGAMES = 100; //maxium amount of plays
 	
-	DECKONEWIN = 100, 
-	DECKTWOWIN = 100,
-	DECKTHREEWIN = 50, 
-	DECKFOURWIN = 50,
+    var DECKA_PENALTY = [0,0,-150,0,-300,0,-200,0,-250,-350,0,-350,0,-250,-200,0,-300,-150,0,0,0,-300,0,-350,0,-200,-250,-150,0,0,-350,-200,-250,0,0,0,-150,-300,0,0];
+    var DECKB_PENALTY = [0,0,0,0,0,0,0,0,-1250,0,0,0,0,-1250,0,0,0,0,0,0,-1250,0,0,0,0,0,0,0,0,0,0,-1250,0,0,0,0,0,0,0,0];
+    var DECKC_PENALTY = [0,0,-50,0,-50,0,-50,0,-50,-50, 0, -25,-75,0,0,0,-25,-75,0,-50,0,0,0,-50,-25,-50,0,0,-75,-50,0,0,0,-25,-25,0,-75,0,-50,-75];
+    var DECKD_PENALTY = [0,0,0,0,0,0,0,0,0,-250,0,0,0,0,0,0,0,0,0,-250,0,0,0,0,0,0,0,0,-250,0,0,0,0,0,-250,0,0,0,0,0];
 	
-	var DECKA_PENALTY = [0,0,0,0,0,0,0,0,0,0];
-	var DECKB_PENALTY = [0,0,0,0,0,0,0,0,0,0];
-	var DECKC_PENALTY = [0,0,0,0,0,0,0,0,0,0];
-	var DECKD_PENALTY = [0,0,0,0,0,0,0,0,0,0];
-	
-	
-	totalclicks = 0, //total clicks. if == to MAXGAMES stop playing.
-	CASHMAX = 6000, //Maximum amount of cash that can be won.
-	borrowedcash = 0, //how much cash did you borrow?
-	MAXGAMES = 100; //maxium amount of plays
+   
 
-//rewards preprogramed pentalties are higher for deck A & B.
-$(function(){
-	$('#modal-splash').modal('show'); //show the modal on first load
-	$("#gamelog").val("");
-	$("#emailBtn").click(function(){
-		var emailto = $("#emailResultsTo").val();
-		console.log("I will email results to: ", emailto);
-		$('#modal-splash').modal('hide'); //close the modal
-	});
-	
-	$(".card").click(function (){
-		if(totalclicks < MAXGAMES)
-		{
-			var clicked = $(this).attr("id");
-			
-			var gamelogmsg = "You win ";
-			var newline = "\r\n";
-			switch(clicked) 
-			{
-				case "card-one":
-					totalcash += DECKONEWIN; //win 100 profit
-					
-					gamelogmsg += DECKONEWIN.toString();
-					gamelogmsg += newline + "You lost $200";
-					borrowedcash += 200;
-					totalcash -= 200;
-					
-					deckoneclicks += 1;
-					$("#deck-one-clicks").html(deckoneclicks);
-					break;
-				case "card-two":
-					totalcash += DECKTWOWIN; //win 100 profit
-					gamelogmsg += DECKTWOWIN.toString();
-					gamelogmsg += newline + "You lost $1250";
-					borrowedcash += 1250;
-					totalcash -= 1250;
-					decktwoclicks += 1;
-					$("#deck-two-clicks").html(decktwoclicks);
-					break;
-				case "card-three":
-					totalcash += DECKTHREEWIN; //win 50 profit
-					gamelogmsg += DECKTHREEWIN.toString();
-					gamelogmsg += newline + "You lost $50";
-					borrowedcash += 50;
-					totalcash -= 50;										
-					deckthreeclicks += 1;
-					$("#deck-three-clicks").html(deckthreeclicks);
-					break;
-				case "card-four":
-					totalcash += DECKFOURWIN; //win 50 profit
-					gamelogmsg += DECKFOURWIN.toString();
-					gamelogmsg += newline + "You lost $250";
-					borrowedcash += 250;
-					totalcash -= 250;
-					deckfourclicks += 1;
-					$("#deck-four-clicks").html(deckfourclicks);
-					break;
-			}
-			
-			totalclicks = deckoneclicks + decktwoclicks + deckthreeclicks + deckfourclicks;
-			if(totalcash < 0) totalcash = 0; //if total cash is negative make it 0.
-			
-			$("#gamelog").val(gamelogmsg);
-			var cashpilebarvalue = 100 * totalcash / CASHMAX;			
-			
-			$("#cashpilebar").css("width", cashpilebarvalue.toString() + "%");
-			$("#cashpileamt").html("$" + totalcash);
-			
-			
-			console.log("totalcash", totalcash);
-			console.log("cashpilebarvalue", cashpilebarvalue);			
-			console.log("Total clicks = ", totalclicks);
-		}
-		else
-		{
-			console.error("You have exceeded the max amount of plays", MAXGAMES)
-		}
-	});
-});
+    //rewards preprogramed pentalties are higher for deck A & B.
+    $(function(){
+        $('#modal-splash').modal('show'); //show the modal on first load
+       
+        $("#emailBtn").click(function(){
+            email_address = $("#emailResultsTo").val();
+            $("#geemail").html(email_address);
+            $('#modal-splash').modal('hide'); //close the modal
+        });
+	 
+        $(".card").click(function (){
+            if(totalclicks < MAXGAMES)
+            {
+                var clicked = $(this).attr("id");
+                switch(clicked) 
+                {
+                    case "card-one":
+                        if (deckoneclicks === DECKA_PENALTY.length) deckoneclicks = 0; //if we are at the end of the array reset our position back to the beginning.
+                        penalty = DECKA_PENALTY[deckoneclicks]; //get the penalty value
+                        netgain = DECKA_WIN + penalty;          //get the net gain
+                        totalcash += netgain;                   //add into our total cash
+                        deckoneclicks++;                        //increment our position
+                        totalclicks++;                          //increment the game counter.
+                        //output our win loss
+                        $("#winamt").html(DECKA_WIN);
+                        $("#penaltyamt").html(penalty.toString());
+                        $("#netgains").html(netgain.toString());
+                        $("#deck-one-clicks").html(deckoneclicks);
+                        break;
+                    case "card-two":
+                        if (decktwoclicks === DECKB_PENALTY.length) decktwoclicks = 0;
+                        penalty = DECKB_PENALTY[decktwoclicks];
+                        netgain = DECKB_WIN + penalty;
+                        totalcash += netgain;
+                        decktwoclicks++;
+                        totalclicks++;
+                        //output our win loss
+                        $("#winamt").html(DECKB_WIN);
+                        $("#penaltyamt").html(penalty.toString());
+                        $("#netgains").html(netgain.toString());
+                        $("#deck-two-clicks").html(decktwoclicks);
+                        break;
+                    case "card-three":
+                        if (deckthreeclicks === DECKC_PENALTY.length) deckthreeclicks = 0;
+                        penalty = DECKC_PENALTY[deckthreeclicks];
+                        netgain = DECKC_WIN + penalty;
+                        totalcash += netgain;
+                        deckthreeclicks++;
+                        totalclicks++;
+                        $("#winamt").html(DECKC_WIN);
+                        $("#penaltyamt").html(penalty.toString());
+                        $("#netgains").html(netgain.toString());                       
+                        $("#deck-three-clicks").html(deckthreeclicks);
+                        break;
+                    case "card-four":
+                        if (deckfourclicks === DECKD_PENALTY.length) deckfourclicks = 0;
+                        penalty = DECKD_PENALTY[deckfourclicks];
+                        netgain = DECKD_WIN + penalty;
+                        totalcash += netgain;
+                        deckfourclicks++;
+                        totalclicks++;
+                        $("#winamt").html(DECKD_WIN);
+                        $("#penaltyamt").html(penalty.toString());
+                        $("#netgains").html(netgain.toString());                        
+                        $("#deck-four-clicks").html(deckfourclicks);
+                        break;
+                }
+                //change the color of the font if we win or lose
+                if (netgain < 0)                
+                    $(".outputtext").css("color", "red");
+                else
+                    $(".outputtext").css("color", "blue");
+               
+                if(totalcash < 0) totalcash = 0; //if total cash is negative make it 0.			               
+
+                //calculate our cash bar and display
+                var cashpilebarvalue = 100 * totalcash / CASHMAX;
+                $("#cashpilebar").css("width", cashpilebarvalue.toString() + "%");
+                $("#cashpileamt").html("$" + totalcash);
+            }
+            else //game over 
+            {
+                $("#modal-gameend").modal('show'); //close the modal               
+            }
+        });
+    });
 </script>
  </body>
  </html>
