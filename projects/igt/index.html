@@ -169,17 +169,11 @@ var totalcash = 2000, //cash in the cash pile
 	DECKTHREEWIN = 50, 
 	DECKFOURWIN = 50,
 	
-	//Probability of loss Should be between 0.00 and 1.00. Note the inequalities in the switch. if px > 0.5 you may have to 1.00-px
-	DECKONELOSSPX = 0.50, 
-	DECKTWOLOSSPX = 0.10, 
-	DECKTHREELOSSPX = 0.50,
-	DECKFOURLOSSPX = 0.10,
+	var DECKA_PENALTY = [0,0,0,0,0,0,0,0,0,0];
+	var DECKB_PENALTY = [0,0,0,0,0,0,0,0,0,0];
+	var DECKC_PENALTY = [0,0,0,0,0,0,0,0,0,0];
+	var DECKD_PENALTY = [0,0,0,0,0,0,0,0,0,0];
 	
-	//Penalty Ranges.
-	DECKONELOSSMIN = 200, DECKONELOSSMAX = 500, //DECK A =  .5 * (500-200) = 150 Average loss
-	DECKTWOLOSSMIN = 1250, DECKTWOLOSSMAX = 1250, //DECK B = .1 * 1250 =  250 Average Loss
-	DECKTHREELOSSMIN = 50, DECKTHREELOSSMAX = 150, //DECK C = .5 * (150-50) = 50 Average Loss
-	DECKFOURLOSSMIN = 250, DECKFOURLOSSMAX = 250, //DECK D  = .1 * 250 = 25 Average Loss
 	
 	totalclicks = 0, //total clicks. if == to MAXGAMES stop playing.
 	CASHMAX = 6000, //Maximum amount of cash that can be won.
@@ -209,48 +203,37 @@ $(function(){
 					totalcash += DECKONEWIN; //win 100 profit
 					
 					gamelogmsg += DECKONEWIN.toString();
-					if( Math.random() <= DECKONELOSSPX)
-					{						
-						gamelogmsg += newline + "You lost $200";
-						borrowedcash += 200;
-						totalcash -= 200;
-					}
+					gamelogmsg += newline + "You lost $200";
+					borrowedcash += 200;
+					totalcash -= 200;
+					
 					deckoneclicks += 1;
 					$("#deck-one-clicks").html(deckoneclicks);
 					break;
 				case "card-two":
 					totalcash += DECKTWOWIN; //win 100 profit
 					gamelogmsg += DECKTWOWIN.toString();
-					if( Math.random() <= DECKTWOLOSSPX)
-					{
-						gamelogmsg += newline + "You lost $1250";
-						borrowedcash += 1250;
-						totalcash -= 1250;
-					}					
+					gamelogmsg += newline + "You lost $1250";
+					borrowedcash += 1250;
+					totalcash -= 1250;
 					decktwoclicks += 1;
 					$("#deck-two-clicks").html(decktwoclicks);
 					break;
 				case "card-three":
 					totalcash += DECKTHREEWIN; //win 50 profit
 					gamelogmsg += DECKTHREEWIN.toString();
-					if( Math.random() <= DECKTHREELOSSPX)
-					{
-						gamelogmsg += newline + "You lost $50";
-						borrowedcash += 50;
-						totalcash -= 50;
-					}					
+					gamelogmsg += newline + "You lost $50";
+					borrowedcash += 50;
+					totalcash -= 50;										
 					deckthreeclicks += 1;
 					$("#deck-three-clicks").html(deckthreeclicks);
 					break;
 				case "card-four":
 					totalcash += DECKFOURWIN; //win 50 profit
 					gamelogmsg += DECKFOURWIN.toString();
-					if( Math.random() <= DECKFOURLOSSPX)
-					{
-						gamelogmsg += newline + "You lost $250";
-						borrowedcash += 250;
-						totalcash -= 250;
-					}
+					gamelogmsg += newline + "You lost $250";
+					borrowedcash += 250;
+					totalcash -= 250;
 					deckfourclicks += 1;
 					$("#deck-four-clicks").html(deckfourclicks);
 					break;
