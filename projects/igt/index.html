@@ -105,16 +105,11 @@
 				<span id="cashpileamt">$2000</span>				
 			</div>
 		</div>
-		
-		<p>Borrowed</p>
-		<div class="progress">		
-			<div id="borrowedpilebar" class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="6000" style="width: 2em">
-				<span id="borrowedpileamt">$0</span>				
-			</div>
-		</div>
 	</section>
 	
 	<section class="row">
+		//report reward, penalty, net gain.. 
+		
 		<textarea id="gamelog"></textarea>
 	</section>
 	
@@ -174,7 +169,7 @@ var totalcash = 2000, //cash in the cash pile
 	DECKTHREEWIN = 50, 
 	DECKFOURWIN = 50,
 	
-	//Probablity of loss Should be between 0.00 and 1.00. Note the inequalities in the switch. if px > 0.5 you may have to 1.00-px
+	//Probability of loss Should be between 0.00 and 1.00. Note the inequalities in the switch. if px > 0.5 you may have to 1.00-px
 	DECKONELOSSPX = 0.50, 
 	DECKTWOLOSSPX = 0.10, 
 	DECKTHREELOSSPX = 0.50,
@@ -187,7 +182,7 @@ var totalcash = 2000, //cash in the cash pile
 	DECKFOURLOSSMIN = 250, DECKFOURLOSSMAX = 250, //DECK D  = .1 * 250 = 25 Average Loss
 	
 	totalclicks = 0, //total clicks. if == to MAXGAMES stop playing.
-	CASHMAX = 15000, //Maximum amount of cash that can be won.
+	CASHMAX = 6000, //Maximum amount of cash that can be won.
 	borrowedcash = 0, //how much cash did you borrow?
 	MAXGAMES = 100; //maxium amount of plays
 
@@ -265,13 +260,11 @@ $(function(){
 			if(totalcash < 0) totalcash = 0; //if total cash is negative make it 0.
 			
 			$("#gamelog").val(gamelogmsg);
-			var cashpilebarvalue = 100 * totalcash / CASHMAX;
-			var borrowedpilebarvalue = 100 * borrowedcash / CASHMAX;
+			var cashpilebarvalue = 100 * totalcash / CASHMAX;			
 			
 			$("#cashpilebar").css("width", cashpilebarvalue.toString() + "%");
 			$("#cashpileamt").html("$" + totalcash);
-			$("#borrowedpilebar").css("width", borrowedpilebarvalue.toString() + "%");
-			$("#borrowedpileamt").html("$" + borrowedcash);
+			
 			
 			console.log("totalcash", totalcash);
 			console.log("cashpilebarvalue", cashpilebarvalue);			
