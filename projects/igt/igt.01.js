@@ -97,7 +97,7 @@ $(function () {
                 $(".outputtext").css("color", "blue");
 
             if (totalcash < 0) totalcash = 0; //if total cash is negative make it 0.			               
-
+            $("#totalmoney").html("$" + totalcash.toString());
             //calculate our cash bar and display
             var cashpilebarvalue = 100 * totalcash / CASHMAX;
             $("#cashpilebar").css("width", cashpilebarvalue.toString() + "%");
@@ -107,8 +107,25 @@ $(function () {
         }
         else //game over 
         {
-            $("#modal-gameend").modal('show'); //close the modal   
-            $("#testresults").html(selectedCards.join(", "));
+            $("#modal-gameend").modal('show'); //close the modal  
+            var csvdata = selectedCards.join(", ");
+            $("#testresults").html(csvdata);
+            if (email_address.length) {
+                $.ajax({
+                    type: 'POST',
+                    contentType: "application/json; charset=utf-8",
+                    url: '/mailsvc/mailsvc.asmx/SendMail',
+                    data: "{ to:" + email_address + ", attachdata: " + csvdata + "}",
+                    dataType: "json",
+                    success: function (xml, status, jqxhr) {
+                        console.log("mail sent");
+                    },
+                    error: function (xhr, textStatus, errorThrown) {
+                        console.error(xhr, textStatus);
+                    }
+                });
+
+            }
         }
     });
 });

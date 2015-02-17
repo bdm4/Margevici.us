@@ -1,0 +1,39 @@
+﻿body { background: #006600; }	
+		
+        figure a img {
+             border: 2px solid black;
+             border-radius: 15px;
+        }
+
+        figure a img:hover {
+             border: 2px solid #00BB00;
+        }       
+        #cashpilelabel { font-weight: 600; color: #FFF; margin-bottom:0; margin-top: 10px; }
+        #testresult { word-wrap: break-word;}
+		figcaption { font-size: 16px; text-align: center; color: #FFF;}	
+		.row { margin: 0 15px; }
+		#gamelog { 
+            width: 100%;
+            background: #fff;             
+            padding: 6px 5px;
+            box-shadow: inset 0px 0px 6px 2px #8A8A8A;
+            -webkit-box-shadow: inset 0px 0px 6px 2px #8A8A8A;
+            -moz-box-shadow: inset 0px 0px 6px 2px #8A8A8A;
+            -o-box-shadow: inset 0px 0px 6px 2px #8A8A8A;
+            border-radius: 3px;              
+		}
+
+        #gamelog p {border-bottom: 1px solid #AEAEAE;}
+		
+        /* Phone Sizes*/
+		@media (max-width: 480px) {	            
+            figure a img {
+                 border: 1px solid black;
+                 border-radius: 5px;
+            }        
+            figure a img:hover {
+                 border: 1px solid #00BB00;
+            }
+            .row { margin: 0; }
+            figcaption { font-size: 12px; font-weight: 600; }	
+		}	

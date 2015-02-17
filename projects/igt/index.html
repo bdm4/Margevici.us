@@ -5,7 +5,7 @@
 <!--[if IE 9 ]>    <html lang="en" class="no-js ie9"> <![endif]-->
 <!--[if gte IE 9]><!--> <html lang="en" class="no-js"> <!--<![endif]-->
 <head>
-	<title>IGT V01</title>
+	<title>Margevici.us</title>
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,7 +20,8 @@
 	<!-- custom fonts 
 	https://developers.google.com/fonts/docs/getting_started#Subsets
 	-->
-	<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Alegreya&effect=shadow-multiple|3d-float|fire-animation">
+	<link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Alegreya">
+    <link rel="stylesheet" type="text/css" href="igt.css">
 
 
 	<script>
@@ -33,47 +34,6 @@
 	    ga('send', 'pageview');
 	</script>
 
-	<style>
-		body { background: #006600; }	
-		
-        figure a img {
-             border: 2px solid black;
-             border-radius: 15px;
-        }
-
-        figure a img:hover {
-             border: 2px solid #00BB00;
-        }       
-        #cashpilelabel { font-weight: 600; color: #FFF; margin-bottom:0; margin-top: 10px; }
-        #testresult { word-wrap: break-word;}
-		figcaption { font-size: 16px; text-align: center; color: #FFF;}	
-		.row { margin: 0 15px; }
-		#gamelog { 
-            width: 100%;
-            background: #fff;             
-            padding: 6px 5px;
-            box-shadow: inset 0px 0px 6px 2px #8A8A8A;
-            -webkit-box-shadow: inset 0px 0px 6px 2px #8A8A8A;
-            -moz-box-shadow: inset 0px 0px 6px 2px #8A8A8A;
-            -o-box-shadow: inset 0px 0px 6px 2px #8A8A8A;
-            border-radius: 3px;              
-		}
-
-        #gamelog p {border-bottom: 1px solid #AEAEAE;}
-		
-        /* Phone Sizes*/
-		@media (max-width: 480px) {	            
-            figure a img {
-                 border: 1px solid black;
-                 border-radius: 5px;
-            }        
-            figure a img:hover {
-                 border: 1px solid #00BB00;
-            }
-            .row { margin: 0; }
-            figcaption { font-size: 12px; font-weight: 600; }	
-		}	
-	</style>
 	
 	<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
 	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -143,6 +103,7 @@
             <p class="outputtext">You won: <span id="winamt"></span></p>
             <p class="outputtext">You lost: <span id="penaltyamt"></span></p>
             <p class="outputtext">Net +/-: <span id="netgains"></span></p>
+            <p class="outputtext">Total $: <span id="totalmoney"></span></p>
 		</div>
 	</section>
 	
