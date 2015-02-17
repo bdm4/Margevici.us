@@ -6,13 +6,15 @@
         totalclicks = 0, //total clicks. if == to MAXGAMES stop playing.  
         penalty = 0,   //penalty
         netgain = 0,   //netgain
-        email_address = 'someone@somewhere.com',
+        email_address = '',
+        mail_attachment = '',
+        GAME_VERSION = "0.13",
         DECKA_WIN = 100,
         DECKB_WIN = 100,
         DECKC_WIN = 50,
         DECKD_WIN = 50,
 	    CASHMAX = 6000, //Maximum amount of cash that can be won.	
-	    MAXGAMES = 100; //maxium amount of plays
+	    MAXGAMES = 10; //maxium amount of plays
 
 var DECKA_PENALTY = [0, 0, -150, 0, -300, 0, -200, 0, -250, -350, 0, -350, 0, -250, -200, 0, -300, -150, 0, 0, 0, -300, 0, -350, 0, -200, -250, -150, 0, 0, -350, -200, -250, 0, 0, 0, -150, -300, 0, 0];
 var DECKB_PENALTY = [0, 0, 0, 0, 0, 0, 0, 0, -1250, 0, 0, 0, 0, -1250, 0, 0, 0, 0, 0, 0, -1250, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1250, 0, 0, 0, 0, 0, 0, 0, 0];
@@ -23,16 +25,55 @@ var selectedCards = [];
 
 //rewards preprogramed pentalties are higher for deck A & B.
 $(function () {
+    $("#testresults").hide();
+    $(".spinner").hide();
+
     $('#modal-splash').modal('show'); //show the modal on first load
 
     $("#emailBtn").click(function () {
         email_address = $("#emailResultsTo").val();
-        $("#geemail").html(email_address);
-        $('#modal-splash').modal('hide'); //close the modal
+
+        if (email_address.length && mail_attachment.length) {
+            $.ajax({
+                type: 'POST',
+                contentType: "application/json; charset=utf-8",
+                url: 'http://margevici.us/mailsvc/mailsvc.asmx/SendMail',
+                data: "{ to:" + email_address + ", attachdata: " + mail_attachment + "}",
+                dataType: "json",
+                success: function (xml, status, jqxhr) {
+                    $(".spinner").hide();
+                    $("#emailBtn").prop("disabled", false);
+                    $("#emailresultstxt").html("Success!");
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    $("#emailresultstxt").html("Error.");
+                    $("#emailBtn").prop("disabled", false);
+                    $(".spinner").hide();
+                    console.error(xhr, textStatus);
+                },
+                beforeSend: function (xhr, settings) {
+                    $("#emailresultstxt").html("Waiting..");
+                    $("#emailBtn").prop("disabled", true);
+                    $(".spinner").show();                    
+                }
+            });
+        }
+        else {
+            console.error("Email address is blank, or there are no test results to send.");
+        }
+    });
+
+    $("#viewresultsbtn").click(function () {
+        if ($("#testresults").is(":hidden")) {
+            $("#testresults").fadeIn(function () { $("#viewresultsbtn").html("Hide results."); });
+        }
+        else { 
+            $("#testresults").fadeOut(function () { $("#viewresultsbtn").html("View results?"); });
+        }
     });
 
     $(".card").click(function () {
-        if (totalclicks < MAXGAMES) {
+        if (totalclicks < MAXGAMES - 1) { //total clicks is 0 based ;) 
             var clicked = $(this).attr("id");
             switch (clicked) {
                 case "card-one":
@@ -107,8 +148,9 @@ $(function () {
         }
         else //game over 
         {
-            $("#modal-gameend").modal('show'); //close the modal   
-            $("#testresults").html(selectedCards.join(", "));
+            $("#modal-gameend").modal('show'); //close the modal  
+            mail_attachment = selectedCards.join(", ");
+            $("#testresults").html(mail_attachment);
         }
     });
 });
