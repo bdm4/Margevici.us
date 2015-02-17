@@ -107,25 +107,8 @@ $(function () {
         }
         else //game over 
         {
-            $("#modal-gameend").modal('show'); //close the modal  
-            var csvdata = selectedCards.join(", ");
-            $("#testresults").html(csvdata);
-            if (email_address.length) {
-                $.ajax({
-                    type: 'POST',
-                    contentType: "application/json; charset=utf-8",
-                    url: '/mailsvc/mailsvc.asmx/SendMail',
-                    data: "{ to:" + email_address + ", attachdata: " + csvdata + "}",
-                    dataType: "json",
-                    success: function (xml, status, jqxhr) {
-                        console.log("mail sent");
-                    },
-                    error: function (xhr, textStatus, errorThrown) {
-                        console.error(xhr, textStatus);
-                    }
-                });
-
-            }
+            $("#modal-gameend").modal('show'); //close the modal   
+            $("#testresults").html(selectedCards.join(", "));
         }
     });
 });
